@@ -53,3 +53,12 @@ struct historique_vols
     AVION av; //avion
 };
 typedef struct historique_vols HISTORIQUE_VOLS;
+
+COMPAGNIE* allouerCompagnies(int*);
+AVION* allouerAvions(int*);
+PASSAGER* allouerPassagers(int*);
+COMPAGNIE creerCompagnie(int);
+AVION creerAvion(int);
+PASSAGER creerPassager();
+DATE Date();
+VOL creerVol();
