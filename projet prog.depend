@@ -1,13 +1,14 @@
 # depslib dependency file v1.0
-1669501060 source:c:\users\chahi\onedrive\bureau\c\projet prog\main.c
+1669625107 source:c:\users\chahi\onedrive\bureau\c\projet prog\main.c
 	<stdio.h>
 	<stdlib.h>
 	"aeroport.h"
 
-1669503190 c:\users\chahi\onedrive\bureau\c\projet prog\aeroport.h
+1669625323 c:\users\chahi\onedrive\bureau\c\projet prog\aeroport.h
 
-1669503964 source:c:\users\chahi\onedrive\bureau\c\projet prog\aeroport_functions.c
+1669624889 source:c:\users\chahi\onedrive\bureau\c\projet prog\aeroport_functions.c
 	<stdio.h>
 	<stdlib.h>
 	"aeroport.h"
+	<string.h>
 

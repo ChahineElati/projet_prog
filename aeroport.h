@@ -35,7 +35,7 @@ struct avion
     PASSAGER *passagers;
     int nb_passagers;
     char type[30];
-    char etat[30];
+    char *etat;
 };
 typedef struct avion AVION;
 
@@ -62,3 +62,5 @@ AVION creerAvion(int);
 PASSAGER creerPassager();
 DATE Date();
 VOL creerVol();
+void saisirType(char []);
+float calculerDuree(DATE, DATE);

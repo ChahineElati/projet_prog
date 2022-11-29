@@ -20,7 +20,8 @@ int main()
             printf("=========================================\n");
             printf("Avion %s\n", ((cmp+i)->avions+j)->id);
             printf("Nombre de places : %d\n", ((cmp+i)->avions+j)->nb_places);
-            printf("Type de l'avion : %s\n\n", ((cmp+i)->avions+j)->type);
+            printf("Type de l'avion : %s\n", ((cmp+i)->avions+j)->type);
+            printf("Etat de l'avion : %s\n\n", ((cmp+i)->avions+j)->etat);
             printf("Passagers:\n");
             for (k=0;k<((cmp+i)->avions+j)->nb_passagers;k++) {
                 printf("+++++++++++++++++++++++++++++++++++++++\n");
@@ -33,6 +34,7 @@ int main()
             printf("Destination: %s\n", ((cmp+i)->avions+j)->vol.destination);
             printf("Date de depart: %d/%d/%d %d:%d\n", ((cmp+i)->avions+j)->vol.date_depart.annee,((cmp+i)->avions+j)->vol.date_depart.mois, ((cmp+i)->avions+j)->vol.date_depart.jour, ((cmp+i)->avions+j)->vol.date_depart.heure, ((cmp+i)->avions+j)->vol.date_depart.minute);
             printf("Date d'arrivee: %d/%d/%d %d:%d\n", ((cmp+i)->avions+j)->vol.date_arrivee.annee,((cmp+i)->avions+j)->vol.date_arrivee.mois, ((cmp+i)->avions+j)->vol.date_arrivee.jour, ((cmp+i)->avions+j)->vol.date_arrivee.heure, ((cmp+i)->avions+j)->vol.date_arrivee.minute);
+//            printf("Duree: %s\n", ((cmp+i)->avions+j)->vol.duree);
             printf("=========================================\n\n");
         };
         printf("--------------------------------------------\n\n");
