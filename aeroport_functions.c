@@ -40,7 +40,6 @@ VOL creerVol() {
     v.date_depart = Date();
     printf("Donner la date d'arrivee: ");
     v.date_arrivee = Date();
-//     v.duree = calculerDuree(v.date_depart, v.date_arrivee);
     return v;
 }
 
@@ -133,3 +132,48 @@ float calculerDuree(DATE date_depart, DATE date_arrivee) {
 
     return duree;
 }
+
+void afficherPassager(PASSAGER psg){
+    printf("+++++++++++++++++++++++++++++++++++++++\n");
+    printf("nom et prenom: %s %s\n", psg.nom, psg.prenom);
+    printf("age: %d\n",psg.age);
+    printf("numero de cin: %ld\n",psg.num_cin);
+    printf("+++++++++++++++++++++++++++++++++++++++\n\n");
+
+
+}
+void afficherDate(DATE dateD,DATE dateA){
+    printf("Date de depart: %d/%d/%d %d:%d\n", dateD.annee,dateD.mois, dateD.jour, dateD.heure, dateD.minute);
+    printf("Date d'arrivee: %d/%d/%d %d:%d\n", dateA.annee,dateA.mois, dateA.jour, dateA.heure, dateA.minute);
+}
+void afficherVole(VOL vol){
+    printf("Numero vol: %s\n", vol.num);
+    printf("Destination: %s\n", vol.destination);
+    afficherDate(vol.date_depart, vol.date_arrivee);
+}
+
+void afficherAvion(AVION av){
+    printf("=========================================\n");
+    printf("Avion %s\n", av.id);
+    printf("Nombre de places : %d\n",av.nb_places);
+    printf("Type de l'avion : %s\n", av.type);
+    printf("Etat de l'avion : %s\n\n", av.etat);
+    printf("Passagers:\n");
+    for(int i=0 ; i<av.nb_passagers ; i++)
+        afficherPassager(av.passagers[i]);
+    afficherVole(av.vol);
+    printf("=========================================\n\n");
+}
+
+void afficherCompagnie(COMPAGNIE cmp) {
+    printf("--------------------------------------------\n");
+    printf("Compagnie: %s\n\n", cmp.nom );
+    for(int i=0; i<cmp.nb_avions; i++) {
+        afficherAvion(cmp.avions[i]);
+
+    }
+    printf("--------------------------------------------\n");
+
+}
+
+

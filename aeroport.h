@@ -63,4 +63,10 @@ PASSAGER creerPassager();
 DATE Date();
 VOL creerVol();
 void saisirType(char []);
+void afficherCompagnie(COMPAGNIE);
+void afficherAvion(AVION);
+void afficherPassager(PASSAGER);
+void afficherVole(VOL);
+void afficherDate(DATE,DATE);
+
 float calculerDuree(DATE, DATE);
