@@ -35,7 +35,7 @@ struct avion
     PASSAGER *passagers;
     int nb_passagers;
     char type[30];
-    char *etat;
+    char etat[30];
 };
 typedef struct avion AVION;
 
@@ -54,19 +54,20 @@ struct historique_vols
 };
 typedef struct historique_vols HISTORIQUE_VOLS;
 
-COMPAGNIE* allouerCompagnies(int*);
+COMPAGNIE* allouerCompagnie();
 AVION* allouerAvions(int*);
 PASSAGER* allouerPassagers(int*);
-COMPAGNIE creerCompagnie(int);
+void creerCompagnies(COMPAGNIE***, int);
 AVION creerAvion(int);
 PASSAGER creerPassager();
 DATE Date();
 VOL creerVol();
 void saisirType(char []);
-void afficherCompagnie(COMPAGNIE);
+void afficherCompagnies(COMPAGNIE**, int);
 void afficherAvion(AVION);
 void afficherPassager(PASSAGER);
 void afficherVole(VOL);
 void afficherDate(DATE,DATE);
-
 float calculerDuree(DATE, DATE);
+void afficherAvionEnVol(COMPAGNIE**, int);
+void afficherAvionRepos(COMPAGNIE**, int);

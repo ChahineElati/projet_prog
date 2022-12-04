@@ -43,12 +43,9 @@ VOL creerVol() {
     return v;
 }
 
-COMPAGNIE* allouerCompagnies(int *nb_compagnies) {
+COMPAGNIE* allouerCompagnie() {
 
-    printf("Donner le nombre de compagnies: ");
-    scanf("%d", nb_compagnies);
-
-    return (COMPAGNIE*) malloc(*nb_compagnies * sizeof(COMPAGNIE));
+    return (COMPAGNIE*) malloc(sizeof(COMPAGNIE));
 }
 
 AVION* allouerAvions(int *nb_avions) {
@@ -99,28 +96,31 @@ AVION creerAvion(int i) {
         av.nb_places = 600;
         break;
     }
+    printf("Donner l'etat de l'avion: ");
+    scanf("%s", av.etat);
     av.passagers = allouerPassagers(&av.nb_passagers);
+    if(!av.passagers) exit(-4);
     for(int i=0; i<av.nb_passagers; i++) {
         av.passagers[i] = creerPassager();
     }
     av.vol = creerVol();
-    av.etat = "au_repos";
 
     return av;
 }
 
-COMPAGNIE creerCompagnie(int i) {
+void creerCompagnies(COMPAGNIE ***cmp, int n) {
 
-    COMPAGNIE cmp;
-
-    printf("Saisir le nom de la compagnie %d: ", i+1);
-    scanf("%s", cmp.nom);
-    cmp.avions = allouerAvions(&cmp.nb_avions);
-    for(int i=0; i<cmp.nb_avions; i++) {
-        cmp.avions[i] = creerAvion(i);
+    for(int i=0; i<n; i++) {
+        (*cmp)[i] = allouerCompagnie();
+        if(!(*cmp)[i]) exit(-2);
+        printf("Saisir le nom de la compagnie %d: ", i+1);
+        scanf("%s", (*cmp)[i]->nom);
+        (*cmp)[i]->avions = allouerAvions(&(*cmp)[i]->nb_avions);
+        if(!(*cmp)[i]->avions) exit(-3);
+        for(int j=0; j<(*cmp)[i]->nb_avions; j++) {
+            (*cmp)[i]->avions[j] = creerAvion(j);
+        }
     }
-
-    return cmp;
 }
 
 float calculerDuree(DATE date_depart, DATE date_arrivee) {
@@ -165,15 +165,37 @@ void afficherAvion(AVION av){
     printf("=========================================\n\n");
 }
 
-void afficherCompagnie(COMPAGNIE cmp) {
-    printf("--------------------------------------------\n");
-    printf("Compagnie: %s\n\n", cmp.nom );
-    for(int i=0; i<cmp.nb_avions; i++) {
-        afficherAvion(cmp.avions[i]);
-
+void afficherCompagnies(COMPAGNIE **cmp, int n) {
+    for(int i=0; i<n; i++) {
+        printf("--------------------------------------------\n");
+        printf("Compagnie: %s\n\n", cmp[i]->nom );
+        for(int j=0; j<cmp[i]->nb_avions; j++) {
+            afficherAvion(cmp[i]->avions[j]);
+        }
+        printf("--------------------------------------------\n");
     }
-    printf("--------------------------------------------\n");
-
 }
+
+void afficherAvionRepos(COMPAGNIE **cmp,int n) {
+    printf("\nLes avions au repos sont:\n");
+    for(int i=0; i<n; i++) {
+            for(int j=0; j<cmp[i]->nb_avions ;j++){
+                 if(!strcmp(cmp[i]->avions[j].etat, "au_repos")){
+                       printf("%s\n", cmp[i]->avions[j].id);
+               }
+            }
+        }
+}
+void afficherAvionEnVol(COMPAGNIE **cmp, int n){
+    printf("\nLes avions en vol sont:\n");
+    for(int i=0; i<n; i++) {
+            for(int j=0; j<(*cmp+i)->nb_avions ;j++){
+                 if(strcmp(cmp[i]->avions[j].etat ,"en_vol")==0){
+                       printf("%s\n", cmp[i]->avions[j].id);
+               }
+            }
+}
+
+   }
 
 

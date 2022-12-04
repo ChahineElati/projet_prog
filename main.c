@@ -4,17 +4,16 @@
 int main()
 {
 
-    COMPAGNIE* cmp;
-    int n, i;
-    cmp = allouerCompagnies(&n);
+    COMPAGNIE **cmp;
+    int n;
+    printf("Donner le nombre de compagnies: ");
+    scanf("%d", &n);
+    cmp = (COMPAGNIE**) malloc(n * sizeof(COMPAGNIE*));
     if(!cmp) exit(-1);
-    for(i=0; i<n; i++) {
-        cmp[i] = creerCompagnie(i);
-    }
-
-    for(i=0; i<n; i++) {
-            afficherCompagnie(cmp[i]);
-
-    }
+    creerCompagnies(&cmp, n);
+    afficherCompagnies(cmp, n);
+    afficherAvionRepos(cmp, n);
+    afficherAvionEnVol(cmp, n);
     return 0;
+
 }
