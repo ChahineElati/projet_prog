@@ -49,7 +49,7 @@ typedef struct compagnie COMPAGNIE;
 
 struct historique_vols
 {
-    char cmp[30]; //compagnie
+    char *cmp; //compagnie
     AVION av; //avion
 };
 typedef struct historique_vols HISTORIQUE_VOLS;
@@ -69,5 +69,14 @@ void afficherPassager(PASSAGER);
 void afficherVole(VOL);
 void afficherDate(DATE,DATE);
 float calculerDuree(DATE, DATE);
-void afficherAvionEnVol(COMPAGNIE**, int);
-void afficherAvionRepos(COMPAGNIE**, int);
+void afficherAvionEnVol(AVION);
+void afficherAvionRepos(AVION);
+void afficherAvionEnVolSelonCompagnie(COMPAGNIE**, int, char []);
+void afficherAvionReposSelonCompagnie(COMPAGNIE**, int, char []);
+void afficherDuree(float);
+void volSelonDestination(COMPAGNIE**, int, char []);
+void volSelonDateDepart(COMPAGNIE**, int, DATE);
+void volPlusCourteDuree(HISTORIQUE_VOLS*, int);
+void creerLogs(COMPAGNIE**, int, HISTORIQUE_VOLS*);
+int nbAvionEnvol(COMPAGNIE**, int);
+int nbPassagersCompagnie(HISTORIQUE_VOLS*, char [], int);

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "aeroport.h"
 #include <string.h>
+#include <math.h>
 
 void saisirType(char type[30]) {
     do {
@@ -40,6 +41,8 @@ VOL creerVol() {
     v.date_depart = Date();
     printf("Donner la date d'arrivee: ");
     v.date_arrivee = Date();
+    v.duree = calculerDuree(v.date_depart, v.date_arrivee);
+
     return v;
 }
 
@@ -96,14 +99,18 @@ AVION creerAvion(int i) {
         av.nb_places = 600;
         break;
     }
-    printf("Donner l'etat de l'avion: ");
-    scanf("%s", av.etat);
-    av.passagers = allouerPassagers(&av.nb_passagers);
-    if(!av.passagers) exit(-4);
-    for(int i=0; i<av.nb_passagers; i++) {
-        av.passagers[i] = creerPassager();
+    do {
+        printf("Donner l'etat de l'avion (au_repos ou en_vol): ");
+        scanf("%s", av.etat);
+    } while(strcmp(av.etat,"en_vol")!=0 && strcmp(av.etat,"au_repos")!=0);
+    if(strcmp(av.etat, "en_vol")==0){
+        av.passagers = allouerPassagers(&av.nb_passagers);
+        if(!av.passagers) exit(-4);
+        for(int i=0; i<av.nb_passagers; i++) {
+            av.passagers[i] = creerPassager();
+        }
+        av.vol = creerVol();
     }
-    av.vol = creerVol();
 
     return av;
 }
@@ -123,16 +130,6 @@ void creerCompagnies(COMPAGNIE ***cmp, int n) {
     }
 }
 
-float calculerDuree(DATE date_depart, DATE date_arrivee) {
-
-    float duree;
-    if(date_arrivee.jour - date_depart.jour == 0) {
-        duree = date_arrivee.heure - date_depart.heure;
-    }
-
-    return duree;
-}
-
 void afficherPassager(PASSAGER psg){
     printf("+++++++++++++++++++++++++++++++++++++++\n");
     printf("nom et prenom: %s %s\n", psg.nom, psg.prenom);
@@ -150,6 +147,7 @@ void afficherVole(VOL vol){
     printf("Numero vol: %s\n", vol.num);
     printf("Destination: %s\n", vol.destination);
     afficherDate(vol.date_depart, vol.date_arrivee);
+    afficherDuree(vol.duree);
 }
 
 void afficherAvion(AVION av){
@@ -158,10 +156,12 @@ void afficherAvion(AVION av){
     printf("Nombre de places : %d\n",av.nb_places);
     printf("Type de l'avion : %s\n", av.type);
     printf("Etat de l'avion : %s\n\n", av.etat);
-    printf("Passagers:\n");
-    for(int i=0 ; i<av.nb_passagers ; i++)
-        afficherPassager(av.passagers[i]);
-    afficherVole(av.vol);
+    if(strcmp(av.etat, "en_vol")==0) {
+        printf("Passagers:\n");
+        for(int i=0 ; i<av.nb_passagers ; i++)
+            afficherPassager(av.passagers[i]);
+        afficherVole(av.vol);
+    }
     printf("=========================================\n\n");
 }
 
@@ -176,26 +176,149 @@ void afficherCompagnies(COMPAGNIE **cmp, int n) {
     }
 }
 
-void afficherAvionRepos(COMPAGNIE **cmp,int n) {
-    printf("\nLes avions au repos sont:\n");
+void afficherAvionRepos(AVION av) {
+    if(!strcmp(av.etat, "au_repos")){
+        afficherAvion(av);
+    }
+}
+
+void afficherAvionEnVol(AVION av){
+    if(strcmp(av.etat , "en_vol")==0){
+        afficherAvion(av);
+    }
+}
+
+
+   float calculerDuree(DATE date_depart, DATE date_arrivee) {
+
+    float duree=0;
+
+    if(date_arrivee.heure <= date_depart.heure) {
+        duree = date_arrivee.heure - date_depart.heure + 24;
+    }
+    else {
+        duree = date_arrivee.heure - date_depart.heure;
+    }
+
+    if(date_arrivee.minute <= date_depart.minute) {
+        duree += (date_arrivee.minute - date_depart.minute + 60) / 60.f - 1;
+    }
+    else {
+        duree += (date_arrivee.minute - date_depart.minute) / 60.f;
+    }
+
+    return duree;
+}
+
+void afficherAvionEnVolSelonCompagnie(COMPAGNIE **cmp, int n, char nom[30]){
     for(int i=0; i<n; i++) {
-            for(int j=0; j<cmp[i]->nb_avions ;j++){
-                 if(!strcmp(cmp[i]->avions[j].etat, "au_repos")){
-                       printf("%s\n", cmp[i]->avions[j].id);
-               }
+            if(strcmp(cmp[i]->nom, nom)==0) {
+                printf("\nLes avions en vol de %s sont:\n", nom);
+                for(int j=0; j<cmp[i]->nb_avions ;j++){
+                 afficherAvionEnVol(cmp[i]->avions[j]);
+                }
+            }
+    }
+}
+
+void afficherAvionReposSelonCompagnie(COMPAGNIE **cmp, int n, char nom[30]){
+    for(int i=0; i<n; i++) {
+            if(strcmp(cmp[i]->nom, nom)==0) {
+                printf("\nLes avions au repos de %s sont:\n", nom);
+                for(int j=0; j<cmp[i]->nb_avions ;j++){
+                 afficherAvionRepos(cmp[i]->avions[j]);
+                 printf("\n");
+                }
+            }
+    }
+}
+
+void volSelonDestination(COMPAGNIE** cmp, int n, char destination[30]) {
+    for(int i=0; i<n; i++) {
+        for(int j=0; j< cmp[i]->nb_avions; j++) {
+            if(strcmp(cmp[i]->avions[j].etat ,"en_vol")==0 && strcmp(cmp[i]->avions[j].vol.destination , destination)==0) {
+                afficherVole(cmp[i]->avions[j].vol);
+                printf("\n");
             }
         }
+    }
 }
-void afficherAvionEnVol(COMPAGNIE **cmp, int n){
-    printf("\nLes avions en vol sont:\n");
+
+void volSelonDateDepart(COMPAGNIE** cmp, int n, DATE date_depart) {
     for(int i=0; i<n; i++) {
-            for(int j=0; j<(*cmp+i)->nb_avions ;j++){
-                 if(strcmp(cmp[i]->avions[j].etat ,"en_vol")==0){
-                       printf("%s\n", cmp[i]->avions[j].id);
-               }
+        for(int j=0; j< cmp[i]->nb_avions; j++) {
+            if(strcmp(cmp[i]->avions[j].etat ,"en_vol")==0
+               && cmp[i]->avions[j].vol.date_depart.annee==date_depart.annee
+               && cmp[i]->avions[j].vol.date_depart.mois==date_depart.mois
+               && cmp[i]->avions[j].vol.date_depart.jour==date_depart.jour
+               && cmp[i]->avions[j].vol.date_depart.heure==date_depart.heure
+               && cmp[i]->avions[j].vol.date_depart.minute==date_depart.minute
+               ) {
+                afficherVole(cmp[i]->avions[j].vol);
+                printf("\n");
             }
+        }
+    }
 }
 
-   }
+void volPlusCourteDuree(HISTORIQUE_VOLS *logs, int nb_logs) {
 
+    float plus_courte = logs[0].av.vol.duree;
+    VOL vol= logs[0].av.vol;
 
+    for(int i=1; i<nb_logs; i++) {
+        if(logs[i].av.vol.duree<plus_courte) {
+            plus_courte = logs[i].av.vol.duree;
+            vol = logs[i].av.vol;
+        }
+    }
+    afficherVole(vol);
+    printf("\n");
+}
+
+void afficherDuree(float duree) {
+    printf("Duree: %d heures et %d minutes\n", (int) truncf(duree), (int)((duree - truncf(duree)) * 60));
+}
+
+int nbAvionEnvol(COMPAGNIE** cmp, int n) {
+
+    int nb=0;
+
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<cmp[i]->nb_avions; j++) {
+            if(strcmp(cmp[i]->avions[j].etat ,"en_vol")==0) {
+                nb++;
+            }
+        }
+    }
+    return nb;
+
+}
+
+void creerLogs(COMPAGNIE **cmp, int n, HISTORIQUE_VOLS *logs) {
+
+    int k =0;
+
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<cmp[i]->nb_avions; j++) {
+            if(strcmp(cmp[i]->avions[j].etat ,"en_vol")==0) {
+                logs[k].av = cmp[i]->avions[j];
+                logs[k].cmp = cmp[i]->nom;
+                k++;
+            }
+        }
+    }
+}
+
+int nbPassagersCompagnie(HISTORIQUE_VOLS *logs, char cmp[30], int n) {
+
+    int nb=0;
+
+    for(int i=0; i<n; i++) {
+        if(strcmp(logs[i].cmp, cmp)==0) {
+            nb += logs[i].av.nb_passagers;
+        }
+    }
+
+    return nb;
+}
